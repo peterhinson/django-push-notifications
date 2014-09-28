@@ -53,6 +53,7 @@ class GCMDevice(Device):
 
 	class Meta:
 		verbose_name = _("GCM device")
+		unique_together = ('device_id', 'user', 'registration_id')
 
 	def send_message(self, message, **kwargs):
 		from .gcm import gcm_send_message
