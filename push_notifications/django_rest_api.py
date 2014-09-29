@@ -17,45 +17,46 @@ class IsOwner(permissions.BasePermission):
         return obj.user == request.user
 
 
-class DeviceSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Device
-		fields = ('name', 'user', 'active', 'date_created')
-
-
 class APNSDeviceSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = APNSDevice
-		fields = ('name', 'user', 'active', 'date_created', 'device_id', 'registration_id')
+    class Meta:
+        model = APNSDevice
+        fields = ('name', 'device_id', 'registration_id')
+    read_only = ('date_created',)
 
 
 class GCMDeviceSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = GCMDevice
-		fields = ('name', 'user', 'active', 'date_created', 'device_id', 'registration_id')
+    class Meta:
+        model = GCMDevice
+        fields = ('name', 'device_id', 'registration_id')
+    read_only = ('date_created',)
 
 
 class DeviceViewSetMixin(object):
-	queryset = APNSDevice.objects.all()
-	serializer_class = APNSDeviceSerializer
-	permission_classes = (permissions.IsAuthenticated,
-	                      IsOwner,)
+    lookup_field = 'registration_id'
+    queryset = APNSDevice.objects.all()
+    serializer_class = APNSDeviceSerializer
+    permission_classes = (permissions.IsAuthenticated,
+                          IsOwner,)
 
-	def pre_save(self, obj):
-		# Set the requesting user as the device user
-		obj.user = self.request.user
+    def pre_save(self, obj):
+        # Set the requesting user as the device user
+        obj.user = self.request.user
 
 
 class APNSDeviceViewSet(DeviceViewSetMixin, viewsets.ModelViewSet):
-	queryset = APNSDevice.objects.all()
-	serializer_class = APNSDeviceSerializer
+    queryset = APNSDevice.objects.all()
+    serializer_class = APNSDeviceSerializer
 
 
 class GCMDeviceViewSet(DeviceViewSetMixin, viewsets.ModelViewSet):
-	queryset = GCMDevice.objects.all()
-	serializer_class = GCMDeviceSerializer
+    queryset = GCMDevice.objects.all()
+    serializer_class = GCMDeviceSerializer
 
 
+
+#
+# Links for viewsets
+#
 apns_list = APNSDeviceViewSet.as_view({
     'get': 'list',
     'post': 'create'
@@ -68,7 +69,8 @@ apns_detail = APNSDeviceViewSet.as_view({
 
 gcm_list = GCMDeviceViewSet.as_view({
     'get': 'list',
-    'post': 'create'
+    'post': 'create',
+    'delete': 'destroy'
 })
 
 gcm_detail = GCMDeviceViewSet.as_view({
