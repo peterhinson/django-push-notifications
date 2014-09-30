@@ -132,6 +132,14 @@ Exceptions
  - apns.APNSDataOverflow(APNSError): The APNS payload exceeds its maximum size and cannot be sent.
 
 
+Django REST Framework support
+----------------
+
+The app includes REST Framework serializers and views in push_notifications.django_rest_api. The included views only
+allow logged in users to view/add devices for themselves. Use them as base classes if you need to modify permissions
+or functionality.
+
+
 Tastypie support
 ----------------
 
