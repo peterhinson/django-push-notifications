@@ -44,6 +44,7 @@ class DeviceViewSetMixin(object):
 
 
 class APNSDeviceViewSet(DeviceViewSetMixin, viewsets.ModelViewSet):
+    lookup_field = 'registration_id'
     queryset = APNSDevice.objects.all()
     serializer_class = APNSDeviceSerializer
 
@@ -69,8 +70,7 @@ apns_detail = APNSDeviceViewSet.as_view({
 
 gcm_list = GCMDeviceViewSet.as_view({
     'get': 'list',
-    'post': 'create',
-    'delete': 'destroy'
+    'post': 'create'
 })
 
 gcm_detail = GCMDeviceViewSet.as_view({
